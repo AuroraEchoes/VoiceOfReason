@@ -1,4 +1,5 @@
 using Discord;
+using Discord.Net;
 using Discord.WebSocket;
 
 namespace VoiceOfReason
@@ -6,6 +7,7 @@ namespace VoiceOfReason
     public class DiscordBot
     {
         private DiscordSocketClient m_Client = null!;
+        private Dictionary<string, ISlashCommand> m_SlashCommands = new Dictionary<string, ISlashCommand>();
 
         public DiscordBot()
         {
@@ -18,12 +20,14 @@ namespace VoiceOfReason
 
             m_Client.Log += OnLogEvent;
             m_Client.Ready += OnReadyEvent;
+            m_Client.SlashCommandExecuted += OnSlashCommandExecutedEvent;
         }
 
         ~DiscordBot()
         {
             m_Client.Log -= OnLogEvent;
             m_Client.Ready -= OnReadyEvent;
+            m_Client.SlashCommandExecuted -= OnSlashCommandExecutedEvent;
             m_Client.StopAsync();
         }
 
@@ -33,17 +37,39 @@ namespace VoiceOfReason
             await m_Client.StartAsync();
         }
 
-        private static Task OnReadyEvent()
+        private async Task RegisterCommand(ISlashCommand command)
         {
-            Console.WriteLine("Connected to Discord");
-            return Task.CompletedTask;
+            SlashCommandProperties cmd = new SlashCommandBuilder()
+                .WithName(command.Name)
+                .WithDescription(command.Description)
+                .Build();
+            try
+            {
+                await m_Client.CreateGlobalApplicationCommandAsync(cmd);
+            }
+            catch (HttpException exception)
+            {
+                Console.WriteLine(exception.ToString());
+            }
+            m_SlashCommands[command.Name] = command;
+            Console.WriteLine($"Registered command: {command.Name}");
         }
 
-        private static Task OnLogEvent(LogMessage msg)
+        private async Task OnReadyEvent()
+        {
+            Console.WriteLine("Connected to Discord");
+            await RegisterCommand(new ConfirmEventSlashEvent());
+        }
+
+        private Task OnLogEvent(LogMessage msg)
         {
             Console.WriteLine(msg.ToString());
             return Task.CompletedTask;
         }
 
+        private async Task OnSlashCommandExecutedEvent(SocketSlashCommand command)
+        {
+            await m_SlashCommands[command.Data.Name].Run(command);
+        }
     }
 }
