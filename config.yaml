@@ -1,0 +1,104 @@
+confirm_event:
+  types:
+    - id: unrostered
+      name: Unrostered
+      description: "Unrostered event"
+    - id: sixes
+      name: Sixes
+      description: "Rostered Sixes match"
+    - id: highlander
+      name: Highlander
+      description: "Rostered Highlander match"
+  fields:
+    - id: day
+      emoji: \uD83D\uDDD3
+      label: Day
+      bold: true
+    - id: time
+      emoji: \u23F0
+      label: Time
+      bold: true
+    - id: who
+      emoji: \uD83D\uDC65
+      label: Who
+    - id: maps
+      include_types:
+        - sixes
+        - highlander
+      emoji: \uD83D\uDDFA
+      label: Maps
+      bold: true
+    - id: roster_sixes
+      include_types:
+        - sixes
+      emoji: \uD83D\uDD2B
+      label: Roster
+      bold: true
+      subfields:
+        - id: combo_scout
+          emote: <:scout:1333727211815174235>
+          label: Combo Scout
+          bold: false
+        - id: flank_scout
+          emote: <:scout:1333727211815174235>
+          label: Flank Scout
+          bold: false
+        - id: pocket_soldier
+          emote: <:soldier:1333727354505265235>
+          label: Pocket Soldier
+          bold: false
+        - id: roamer_soldier
+          emote: <:soldier:1333727354505265235>
+          label: Roamer Soldier
+          bold: false
+        - id: demoman
+          emote: <:demoman:1333727378370723851>
+          label: Demoman
+          bold: false
+        - id: medic
+          emote: <:medic:1333727312583331874>
+          label: Medic
+          bold: false
+    - id: roster_highlander
+      include_types:
+        - highlander
+      emoji: \uD83D\uDD2B
+      label: Roster
+      bold: true
+      subfields:
+        - id: scout
+          emote: <:scout:1333727211815174235>
+          label: Scout
+          bold: false
+        - id: soldier
+          emote: <:soldier:1333727354505265235>
+          label: Soldier
+          bold: false
+        - id: soldier
+          emote: <:pyro:1362358813948383292>
+          label: Pyro
+          bold: false
+        - id: demoman
+          emote: <:demo:438960920186847236>
+          label: Demoman
+          bold: false
+        - id: heavy
+          emote: <:heavy:1362358817987362846>
+          label: Heavy
+          bold: false
+        - id: heavy
+          emote: <:engineer:1362358819643986070>
+          label: Engineer
+          bold: false
+        - id: medic
+          emote: <:medic:1333727312583331874>
+          label: Medic
+          bold: false
+        - id: sniper
+          emote: <:sniper:1362358812320727080>
+          label: Sniper
+          bold: false
+        - id: spy
+          emote: <:spy:1362358816032690417>
+          label: Spy
+          bold: false

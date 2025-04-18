@@ -39,10 +39,18 @@ namespace VoiceOfReason
 
         private async Task RegisterCommand(ISlashCommand command)
         {
-            SlashCommandProperties cmd = new SlashCommandBuilder()
+            SlashCommandBuilder builder = new SlashCommandBuilder()
                 .WithName(command.Name)
-                .WithDescription(command.Description)
-                .Build();
+                .WithDescription(command.Description);
+            foreach (ISlashCommand.Subcommand subcmd in command.Subcommands)
+            {
+                builder.AddOption(new SlashCommandOptionBuilder()
+                    .WithName(subcmd.ID)
+                    .WithDescription(subcmd.Description)
+                    .WithType(ApplicationCommandOptionType.SubCommand)
+                );
+            }
+            SlashCommandProperties cmd = builder.Build();
             try
             {
                 await m_Client.CreateGlobalApplicationCommandAsync(cmd);
