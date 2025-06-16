@@ -7,6 +7,7 @@ namespace VoiceOfReason
     public class DiscordBot
     {
         private DiscordSocketClient m_Client = null!;
+        private InteractionManager m_InteractionManager;
         private Dictionary<string, ISlashCommand> m_SlashCommands = new Dictionary<string, ISlashCommand>();
 
         public DiscordBot()
@@ -17,7 +18,7 @@ namespace VoiceOfReason
             };
 
             m_Client = new DiscordSocketClient(config);
-
+            m_InteractionManager = new InteractionManager(m_Client);
             m_Client.Log += OnLogEvent;
             m_Client.Ready += OnReadyEvent;
             m_Client.SlashCommandExecuted += OnSlashCommandExecutedEvent;
@@ -66,7 +67,7 @@ namespace VoiceOfReason
         private async Task OnReadyEvent()
         {
             Console.WriteLine("Connected to Discord");
-            await RegisterCommand(new ConfirmEventSlashEvent());
+            await RegisterCommand(new ConfirmEventSlashEvent(m_InteractionManager));
         }
 
         private Task OnLogEvent(LogMessage msg)
@@ -75,9 +76,10 @@ namespace VoiceOfReason
             return Task.CompletedTask;
         }
 
-        private async Task OnSlashCommandExecutedEvent(SocketSlashCommand command)
+        private Task OnSlashCommandExecutedEvent(SocketSlashCommand command)
         {
-            await m_SlashCommands[command.Data.Name].Run(command);
+            _ = Task.Run(async () => await m_SlashCommands[command.Data.Name].Run(command));
+            return Task.CompletedTask;
         }
     }
 }

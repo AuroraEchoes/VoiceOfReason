@@ -1,5 +1,6 @@
-using Discord.WebSocket;
 using Discord;
+using Discord.Rest;
+using Discord.WebSocket;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -12,85 +13,86 @@ namespace VoiceOfReason
         public List<ISlashCommand.Subcommand> Subcommands => m_Config.Types.Select(t => t.ToSubcommand()).ToList();
 
         private ConfirmEvent m_Config;
+        private InteractionManager m_InteractionManager;
 
-        public ConfirmEventSlashEvent()
+        public ConfirmEventSlashEvent(InteractionManager interactionManager)
         {
             string configFile = File.ReadAllText("config.yaml");
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(UnderscoredNamingConvention.Instance)
                 .Build();
             m_Config = deserializer.Deserialize<Config>(configFile).ConfirmEvent;
+            m_InteractionManager = interactionManager;
         }
 
         public async Task Run(SocketSlashCommand context)
         {
-            string typeName = context.Data.Options.First().Name;
-            Type type = m_Config.Types.Where(t => t.id.Equals(typeName)).First();
-            ModalBuilder builder = new ModalBuilder()
-                .WithTitle($"{type.Name} Event Announcement")
-                .WithCustomId($"{Name}-{type.id}-modal");
-            foreach (Field field in m_Config.Fields)
-            {
-                if (field.IncludeTypes is null || field.IncludeTypes.Contains(type.id))
-                    await AddFieldToModal(field, builder);
-            }
-            Modal modal = builder.Build();
-            await context.RespondWithModalAsync(modal);
+            string type = context.Data.Options.First().Name;
+            string name = m_Config.Types.Where(t => t.id.Equals(type)).First().Name;
+            List<Field> fields = m_Config.Fields
+                .Where(f => f.IncludeTypes is null || f.IncludeTypes.Contains(type)).ToList();
+            MultiPageModal modal = new MultiPageModal($"{name} Event Confirmation", fields, m_InteractionManager);
+            Dictionary<string, string> values = await modal.BeginSendingMultiPageModal(context);
+            RestUserMessage message = await SendMessage(values, context.ChannelId, name, fields);
+            List<Reaction> reactions = m_Config.Reactions
+                .Where(f => f.IncludeTypes is null || f.IncludeTypes.Contains(type)).ToList();
+            await AddReactions(message, reactions);
         }
 
-        private async Task AddFieldToModal(Field field, ModalBuilder builder)
+        public async Task<RestUserMessage> SendMessage(Dictionary<string, string> values, ulong? channelID, string name, List<Field> fields)
         {
-            await AddFieldToModalRecursive(field, builder, 0, "");
+            if (channelID is null) return null!;
+            SocketTextChannel channel = await m_InteractionManager.GetChannel((ulong)channelID!);
+            return await channel.SendMessageAsync("[ @everyone ]", embed: BuildConfirmEventEmbed(values, name, fields, m_Config.Footer));
         }
 
-        private async Task AddFieldToModalRecursive(Field field, ModalBuilder builder, int depth, string prefix)
+        public async Task AddReactions(RestUserMessage message, List<Reaction> reactions)
         {
-            builder.AddTextInput(new TextInputBuilder()
-                .WithCustomId(field.id)
-                .WithLabel($"{prefix}{field.Label}")
-                .WithStyle(TextInputStyle.Short)
-            );
-            if (field.Subfields is null)
-                return;
-            foreach (Field subField in field.Subfields)
+            foreach (Reaction r in reactions)
             {
-                await AddFieldToModalRecursive(subField, builder, depth + 1, $"{prefix} → ");
+                await message.AddReactionAsync(r.Emote is not null ? Emote.Parse(r.Emote) : Emoji.Parse(r.Emoji));
             }
         }
 
-        // TODO: This shouldn’t remain here
-        private struct Config
+        private Embed BuildConfirmEventEmbed(Dictionary<string, string> values, string name, List<Field> fields, string footer)
         {
-            public ConfirmEvent ConfirmEvent;
+            return new EmbedBuilder()
+                .WithTitle($"{name} Event Confirmation")
+                .WithDescription(string.Join("\n\n", fields.Select(f => FieldToString(f, values)).Append(footer)))
+                .Build();
         }
 
-        private struct ConfirmEvent
+        private string FieldToString(Field field, Dictionary<string, string> values, int depth = 0)
         {
-            public List<Type> Types;
-            public List<Field> Fields;
-        }
-
-        private struct Type
-        {
-            public string id;
-            public string Name;
-            public string Description;
-
-            public ISlashCommand.Subcommand ToSubcommand()
+            string value = values.ContainsKey(field.id) ? values[field.id] : "";
+            string icon = field.Emote is not null ? field.Emote : field.Emoji;
+            string nameSurround = field.Bold ? "**" : "";
+            // int depth = FieldDepth(field);
+            string indent = depth > 0 ? "> " + string.Concat(Enumerable.Repeat(" . ", depth - 1)) : "";
+            string buf = $"{indent}{icon} {nameSurround}{field.Label}{nameSurround}: {value}";
+            if (field.Subfields is not null && field.Subfields.Count > 0)
             {
-                return new ISlashCommand.Subcommand { ID = this.id, Description = this.Description };
+                buf += "\n" + string.Join("\n", field.Subfields.Select(f => FieldToString(f, values, depth + 1)));
             }
+            return buf;
         }
 
-        private struct Field
+        private int FieldDepth(Field field)
         {
-            public string id;
-            public List<string> IncludeTypes;
-            public string Emoji;
-            public string Emote;
-            public string Label;
-            public bool Bold;
-            public List<Field> Subfields;
+            return RecurseFieldDepth(field, m_Config.Fields);
+        }
+
+        private int RecurseFieldDepth(Field field, List<Field> fields, int currDepth = 0)
+        {
+            Console.WriteLine("Recursing");
+            foreach (Field f in fields)
+            {
+                if (f.id == field.id)
+                    return currDepth;
+                else if (f.Subfields is not null)
+                    RecurseFieldDepth(field, f.Subfields, currDepth + 1);
+            }
+            return currDepth;
         }
     }
 }
