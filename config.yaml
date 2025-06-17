@@ -40,27 +40,27 @@ confirm_event:
       bold: true
       subfields:
         - id: combo_scout
-          emote: <:scout:1333727211815174235>
+          emote: <:tf_scout:1384378124036210718>
           label: Combo Scout
           bold: false
         - id: flank_scout
-          emote: <:scout:1333727211815174235>
+          emote: <:tf_scout:1384378124036210718>
           label: Flank Scout
           bold: false
         - id: pocket_soldier
-          emote: <:soldier:1333727354505265235>
+          emote: <:tf_soldier:1384378104654594178>
           label: Pocket Soldier
           bold: false
         - id: roamer_soldier
-          emote: <:soldier:1333727354505265235>
+          emote: <:tf_soldier:1384378104654594178>
           label: Roamer Soldier
           bold: false
         - id: demoman
-          emote: <:demoman:1333727378370723851>
+          emote: <:tf_demoman:1384378186460037250>
           label: Demoman
           bold: false
         - id: medic
-          emote: <:medic:1333727312583331874>
+          emote: <:tf_medic:1384378148052926526>
           label: Medic
           bold: false
     - id: roster_highlander
@@ -71,42 +71,44 @@ confirm_event:
       bold: true
       subfields:
         - id: scout
-          emote: <:scout:1333727211815174235>
+          emote: <:tf_scout:1384378124036210718>
           label: Scout
           bold: false
         - id: soldier
-          emote: <:soldier:1333727354505265235>
+          emote: <:tf_soldier:1384378104654594178>
           label: Soldier
           bold: false
         - id: pyro
-          emote: <:pyro:1362358813948383292>
+          emote: <:tf_pyro:1384377621684551781>
           label: Pyro
           bold: false
         - id: demoman
-          emote: <:demo:438960920186847236>
+          emote: <:tf_demoman:1384378186460037250>
           label: Demoman
           bold: false
         - id: heavy
-          emote: <:heavy:1362358817987362846>
+          emote: <:tf_heavy:1384377601761480714>
           label: Heavy
           bold: false
         - id: engineer
-          emote: <:engineer:1362358819643986070>
+          emote: <:tf_engineer:1384377574733643848>
           label: Engineer
           bold: false
         - id: medic
-          emote: <:medic:1333727312583331874>
+          emote: <:tf_medic:1384378148052926526>
           label: Medic
           bold: false
         - id: sniper
-          emote: <:sniper:1362358812320727080>
+          emote: <:tf_sniper:1384377638549983233>
           label: Sniper
           bold: false
         - id: spy
-          emote: <:spy:1362358816032690417>
+          emote: <:tf_spy:1384377657839321138>
           label: Spy
           bold: false
   reactions:
     - emoji: ":white_check_mark:"
     - emoji: ":x:"
   footer: "*React with :white_check_mark: if you can make it*"
+availability_poll:
+  header: "*Polling availability*\nReact with **all** of the days during which you are available **for at least an hour** between 6pm – 10pm."

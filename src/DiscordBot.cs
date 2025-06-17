@@ -43,12 +43,14 @@ namespace VoiceOfReason
             SlashCommandBuilder builder = new SlashCommandBuilder()
                 .WithName(command.Name)
                 .WithDescription(command.Description);
-            foreach (ISlashCommand.Subcommand subcmd in command.Subcommands)
+            foreach (ISlashCommand.Parameter param in command.Parameters)
             {
+                bool required = param.Type != ApplicationCommandOptionType.SubCommand;
                 builder.AddOption(new SlashCommandOptionBuilder()
-                    .WithName(subcmd.ID)
-                    .WithDescription(subcmd.Description)
-                    .WithType(ApplicationCommandOptionType.SubCommand)
+                    .WithName(param.ID)
+                    .WithDescription(param.Description)
+                    .WithType(param.Type)
+                    .WithRequired(required)
                 );
             }
             SlashCommandProperties cmd = builder.Build();
@@ -68,6 +70,7 @@ namespace VoiceOfReason
         {
             Console.WriteLine("Connected to Discord");
             await RegisterCommand(new ConfirmEventSlashEvent(m_InteractionManager));
+            await RegisterCommand(new PollAvailabilitySlashCommand(m_InteractionManager));
         }
 
         private Task OnLogEvent(LogMessage msg)

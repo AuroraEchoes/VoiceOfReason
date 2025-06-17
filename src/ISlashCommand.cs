@@ -1,3 +1,4 @@
+using Discord;
 using Discord.WebSocket;
 
 namespace VoiceOfReason
@@ -6,12 +7,13 @@ namespace VoiceOfReason
     {
         public string Name { get; }
         public string Description { get; }
-        public List<Subcommand> Subcommands { get; }
+        public List<Parameter> Parameters { get; }
 
         public Task Run(SocketSlashCommand context);
 
-        public struct Subcommand
+        public struct Parameter
         {
+            public ApplicationCommandOptionType Type;
             public string ID;
             public string Description;
         }

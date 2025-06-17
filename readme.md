@@ -10,6 +10,7 @@ It’s also fully configurable via `config.yaml`, so you can add your own event 
 
 # Commands
 - `/confirm-event [sixes|highlander|unrostered]`
+- `/poll-availability [start-date(YYYY-MM-DD)]`
 
 # Usage
 Add a Discord bot token to `secrets.txt`. Run!

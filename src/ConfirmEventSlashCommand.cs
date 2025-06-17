@@ -10,31 +10,25 @@ namespace VoiceOfReason
     {
         public string Name { get; } = "confirm-event";
         public string Description { get; } = "Confirm an event.";
-        public List<ISlashCommand.Subcommand> Subcommands => m_Config.Types.Select(t => t.ToSubcommand()).ToList();
+        public List<ISlashCommand.Parameter> Parameters => Configuration.Config.ConfirmEvent.Types.Select(t => t.ToSubcommand()).ToList();
 
-        private ConfirmEvent m_Config;
         private InteractionManager m_InteractionManager;
 
         public ConfirmEventSlashEvent(InteractionManager interactionManager)
         {
-            string configFile = File.ReadAllText("config.yaml");
-            var deserializer = new DeserializerBuilder()
-                .WithNamingConvention(UnderscoredNamingConvention.Instance)
-                .Build();
-            m_Config = deserializer.Deserialize<Config>(configFile).ConfirmEvent;
             m_InteractionManager = interactionManager;
         }
 
         public async Task Run(SocketSlashCommand context)
         {
             string type = context.Data.Options.First().Name;
-            string name = m_Config.Types.Where(t => t.id.Equals(type)).First().Name;
-            List<Field> fields = m_Config.Fields
+            string name = Configuration.Config.ConfirmEvent.Types.Where(t => t.id.Equals(type)).First().Name;
+            List<Field> fields = Configuration.Config.ConfirmEvent.Fields
                 .Where(f => f.IncludeTypes is null || f.IncludeTypes.Contains(type)).ToList();
             MultiPageModal modal = new MultiPageModal($"{name} Event Confirmation", fields, m_InteractionManager);
             Dictionary<string, string> values = await modal.BeginSendingMultiPageModal(context);
             RestUserMessage message = await SendMessage(values, context.ChannelId, name, fields);
-            List<Reaction> reactions = m_Config.Reactions
+            List<Reaction> reactions = Configuration.Config.ConfirmEvent.Reactions
                 .Where(f => f.IncludeTypes is null || f.IncludeTypes.Contains(type)).ToList();
             await AddReactions(message, reactions);
         }
@@ -43,7 +37,7 @@ namespace VoiceOfReason
         {
             if (channelID is null) return null!;
             SocketTextChannel channel = await m_InteractionManager.GetChannel((ulong)channelID!);
-            return await channel.SendMessageAsync("[ @everyone ]", embed: BuildConfirmEventEmbed(values, name, fields, m_Config.Footer));
+            return await channel.SendMessageAsync("[ @everyone ]", embed: BuildConfirmEventEmbed(values, name, fields, Configuration.Config.ConfirmEvent.Footer));
         }
 
         public async Task AddReactions(RestUserMessage message, List<Reaction> reactions)
@@ -79,7 +73,7 @@ namespace VoiceOfReason
 
         private int FieldDepth(Field field)
         {
-            return RecurseFieldDepth(field, m_Config.Fields);
+            return RecurseFieldDepth(field, Configuration.Config.ConfirmEvent.Fields);
         }
 
         private int RecurseFieldDepth(Field field, List<Field> fields, int currDepth = 0)
