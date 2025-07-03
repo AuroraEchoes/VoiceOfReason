@@ -23,7 +23,7 @@ namespace VoiceOfReason
             { DayOfWeek.Wednesday, Emote.Parse("<:weekday_wednesday:1384377193756364831>") },
             { DayOfWeek.Thursday, Emote.Parse("<:weekday_thursday:1384377156184047697>") },
             { DayOfWeek.Friday, Emote.Parse("<:weekday_friday:1384377061296050206>") },
-            { DayOfWeek.Saturday, Emote.Parse("<:weekday_friday:1384377061296050206>") }
+            { DayOfWeek.Saturday, Emote.Parse("<:weekday_saturday:1384377114895323306>") }
 
         };
 
