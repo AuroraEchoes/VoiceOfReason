@@ -1,8 +1,6 @@
 using Discord;
 using Discord.Rest;
 using Discord.WebSocket;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace VoiceOfReason
 {
@@ -52,41 +50,9 @@ namespace VoiceOfReason
         {
             return new EmbedBuilder()
                 .WithTitle($"{name} Event Confirmation")
-                .WithDescription(string.Join("\n\n", fields.Select(f => FieldToString(f, values)).Append(footer)))
+                .WithDescription(string.Join("\n\n", fields.Select(f => f.ToString(f, values)).Append(footer)))
                 .Build();
         }
 
-        private string FieldToString(Field field, Dictionary<string, string> values, int depth = 0)
-        {
-            string value = values.ContainsKey(field.id) ? values[field.id] : "";
-            string icon = field.Emote is not null ? field.Emote : field.Emoji;
-            string nameSurround = field.Bold ? "**" : "";
-            // int depth = FieldDepth(field);
-            string indent = depth > 0 ? "> " + string.Concat(Enumerable.Repeat(" . ", depth - 1)) : "";
-            string buf = $"{indent}{icon} {nameSurround}{field.Label}{nameSurround}: {value}";
-            if (field.Subfields is not null && field.Subfields.Count > 0)
-            {
-                buf += "\n" + string.Join("\n", field.Subfields.Select(f => FieldToString(f, values, depth + 1)));
-            }
-            return buf;
-        }
-
-        private int FieldDepth(Field field)
-        {
-            return RecurseFieldDepth(field, Configuration.Config.ConfirmEvent.Fields);
-        }
-
-        private int RecurseFieldDepth(Field field, List<Field> fields, int currDepth = 0)
-        {
-            Console.WriteLine("Recursing");
-            foreach (Field f in fields)
-            {
-                if (f.id == field.id)
-                    return currDepth;
-                else if (f.Subfields is not null)
-                    RecurseFieldDepth(field, f.Subfields, currDepth + 1);
-            }
-            return currDepth;
-        }
     }
 }

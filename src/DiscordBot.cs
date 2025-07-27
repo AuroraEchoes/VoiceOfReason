@@ -71,6 +71,7 @@ namespace VoiceOfReason
             Console.WriteLine("Connected to Discord");
             await RegisterCommand(new ConfirmEventSlashEvent(m_InteractionManager));
             await RegisterCommand(new PollAvailabilitySlashCommand(m_InteractionManager));
+            await RegisterCommand(new AnnounceEventSlashCommand(m_InteractionManager));
         }
 
         private Task OnLogEvent(LogMessage msg)

@@ -112,3 +112,23 @@ confirm_event:
   footer: "*React with :white_check_mark: if you can make it*"
 availability_poll:
   header: "*Polling availability*\nReact with **all** of the days during which you are available **for at least an hour** between 6pm – 10pm."
+announce_event:
+  fields:
+    - id: type
+      emoji: ":card_box:"
+      label: Type
+      bold: true
+    - id: day
+      emoji: ":calendar_spiral:"
+      label: Day
+      bold: true
+    - id: who
+      emoji: ":busts_in_silhouette:"
+      label: Who
+  reactions:
+    - ":six:"
+    - ":seven:"
+    - ":eight:"
+    - ":nine:"
+    - ":keycap_ten:"
+  footer: "*React below with time availability*"
