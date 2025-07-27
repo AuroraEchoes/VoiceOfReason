@@ -63,7 +63,6 @@ namespace VoiceOfReason
 
         private Embed BuildAnnounceEventEmbed(DateTime startDate, List<Field> fields, Dictionary<string, string> values)
         {
-            Console.WriteLine("Hi 3");
             string fieldsStr = string.Join("\n\n", fields.Select(f => f.ToString(f, values)));
             return new EmbedBuilder()
                 .WithTitle($"Event Announcement")
@@ -76,10 +75,10 @@ namespace VoiceOfReason
             TimeZoneInfo timezone = TimeZoneInfo.FindSystemTimeZoneById("Australia/Sydney");
             return string.Join("\n", Enumerable.Range(0, 5).Select(n =>
             {
-                DateTime time = new DateTime(DateOnly.FromDateTime(date), new TimeOnly(n + 6, 0));
+                DateTime time = new DateTime(DateOnly.FromDateTime(date), new TimeOnly(n + 18, 0));
                 TimeZoneInfo.ConvertTimeToUtc(time, timezone);
                 long timestamp = ((DateTimeOffset)time).ToUnixTimeSeconds();
-                return $"{Configuration.Config.AnnounceEvent.Reactions[n]} →  <t:{timestamp}:t>";
+                return $"{Configuration.Config.AnnounceEvent.Reactions[n]} →  {n + 6} PM (<t:{timestamp}:t>)";
             }));
         }
     }
