@@ -76,7 +76,7 @@ namespace VoiceOfReason
             return string.Join("\n", Enumerable.Range(0, 5).Select(n =>
             {
                 DateTime time = new DateTime(DateOnly.FromDateTime(date), new TimeOnly(n + 18, 0));
-                TimeZoneInfo.ConvertTimeToUtc(time, timezone);
+                time = TimeZoneInfo.ConvertTimeToUtc(time, timezone);
                 long timestamp = ((DateTimeOffset)time).ToUnixTimeSeconds();
                 return $"{Configuration.Config.AnnounceEvent.Reactions[n]} →  {n + 6} PM (<t:{timestamp}:t>)";
             }));
