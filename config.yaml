@@ -31,6 +31,7 @@ confirm_event:
     - id: maps
       include_types:
         - sixes
+        - sixes-engi
         - highlander
       emoji: ":map:"
       label: Maps
