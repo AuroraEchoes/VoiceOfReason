@@ -6,6 +6,9 @@ confirm_event:
     - id: sixes
       name: Sixes
       description: "Rostered Sixes match"
+    - id: sixes-engi
+      name: "Sixes"
+      description: "Rostered Sixes match with Flank Engineer"
     - id: highlander
       name: Highlander
       description: "Rostered Highlander match"
@@ -105,6 +108,37 @@ confirm_event:
         - id: spy
           emote: <:tf_spy:1384377657839321138>
           label: Spy
+          bold: false
+    - id: roster_sixes_engineer
+      include_types:
+        - sixes-engi
+      emoji: ":video_game:"
+      label: Roster
+      bold: true
+      subfields:
+        - id: combo_scout
+          emote: <:tf_scout:1384378124036210718>
+          label: Combo Scout
+          bold: false
+        - id: flank_engineer
+          emote: <:tf_engineer:1384377574733643848>
+          label: Flank Engineer
+          bold: false
+        - id: pocket_soldier
+          emote: <:tf_soldier:1384378104654594178>
+          label: Pocket Soldier
+          bold: false
+        - id: roamer_soldier
+          emote: <:tf_soldier:1384378104654594178>
+          label: Roamer Soldier
+          bold: false
+        - id: demoman
+          emote: <:tf_demoman:1384378186460037250>
+          label: Demoman
+          bold: false
+        - id: medic
+          emote: <:tf_medic:1384378148052926526>
+          label: Medic
           bold: false
   reactions:
     - emoji: ":white_check_mark:"
