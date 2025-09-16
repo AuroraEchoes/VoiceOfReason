@@ -39,6 +39,7 @@ namespace VoiceOfReason
                 Dictionary<string, string> values = await modal.BeginSendingMultiPageModal(context);
                 RestUserMessage message = await SendMessage(context.ChannelId, date, fields, values);
                 await message.AddReactionsAsync(Configuration.Config.AnnounceEvent.Reactions.Select(s => Emoji.Parse(s)));
+                await message.AddReactionAsync(Emoji.Parse("❌"));
             }
             else
             {
